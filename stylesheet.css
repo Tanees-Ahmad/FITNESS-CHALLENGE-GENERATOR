@@ -36,47 +36,29 @@
   @media screen and (max-width: 768px) {
     .cont {
       width: 100%; /* Adjust width for smaller screens */
-      max-width: none; /* Remove max-width */
-      height: 100vh; /* Use full viewport height */
     }
     
     .form,
     .sub-cont {
-      width: 100%; /* Adjust width for smaller screens */
-      max-width: none; /* Remove max-width */
-      padding: 30px 20px; /* Adjust padding for smaller screens */
-    }
-  
-    .img {
-      width: 100%;
-      padding-top: 50%; /* Maintain aspect ratio */
-    }
-    
-    .img:before {
-      width: 100%;
+      padding: 30px; /* Adjust padding for smaller screens */
     }
     
     .img-text {
       top: 20px;
     }
   
-    .social-media ul li {
-      margin: 10px 5px; /* Adjust margin for smaller screens */
-    }
-  
     .social-media img {
-      width: 20px; /* Adjust size of social media icons */
-      height: 20px; /* Adjust size of social media icons */
+      width: 20px; /* Adjust size of social media icons for smaller screens */
+      height: 20px; /* Adjust size of social media icons for smaller screens */
     }
   }
   
-  /* Styles for larger screens */
   @media screen and (min-width: 1200px) {
     .cont {
       width: 80%; /* Adjust width for larger screens */
     }
   }
-  
+
   .form{
     position: relative;
     width: 640px;
