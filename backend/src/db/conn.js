@@ -9,6 +9,6 @@ mongoose.connect("mongodb://localhost:27017/SignIN",{
 }).catch((e)=>{
     console.log("No connection ", e);
 })
-const User = require("../models/register");
+// const User = require("../models/register");
 
 

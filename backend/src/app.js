@@ -3,20 +3,49 @@ const app = express();
 const bodyParser = require('body-parser');
 const User = require("./models/register");
 const path = require('path');
+const expresSession = require('express-session');
+const passport=require('passport');
+const cookieParser=require('cookie-parser');
+const localStrategy = require('passport-local');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
-
+app.use(cookieParser());
 const p = path.join(__dirname,"../views");
 app.use(express.static(p));
-
+app.use(expresSession({
+  resave: false,
+  saveUninitialized:false,
+  secret:"hello"
+}))
+app.use(passport.initialize());
+app.use(passport.session());
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+passport.use(new localStrategy(User.authenticate()));
 app.set("view engine","ejs")
 // const User = require("./models/register");
 require("./db/conn");
-app.get("/",(req,res) =>{
-    res.render("index");
+app.get("/user",(req,res) =>{
+  res.status(201).render("index2", { name });
     // res.send("yes")
 })
+app.get("/",(req,res) =>{
+  res.render("index");
+  // res.send("yes")
+})
+app.get("/userProfile", function(req, res) {
+  if (req.isAuthenticated()) {
+      // Access the authenticated user's information from req.user
+      const { name } = req.user;
+      // Render the userProfile view and pass the user information
+      res.render("userProfile", { name });
+  } else {
+      // Redirect to the login page if user is not authenticated
+      res.redirect("/");
+  }
+});
+
 app.post('/register', async (req, res) => {
     try {
       const { name, email, password, confirmpassword } = req.body || {};
@@ -43,16 +72,41 @@ app.post('/register', async (req, res) => {
       res.status(500).json({ message: 'Internal server error' });
     }
   });
-  app.get('/signin', async (req, res) => {
+
+// app.post('/register', async (req, res) => {
+//   const userdata = new User({
+//     username: req.body.email, // Assuming Passport-local-mongoose needs username
+//     name: req.body.name,
+//     email: req.body.email,
+//   });
+
+//   User.register(userdata, req.body.password, (err, user) => {
+//     if (err) {
+//       console.error('Error during registration:', err);
+//       return res.status(500).json({ message: 'Registration error' });
+//     }
+//     // Registration successful, redirect to login page
+//     res.redirect('/userProfile'); // Replace with your login page path
+//   });
+// });
+
+// Separate login route
+app.get("/userProfile", function(req, res) {
+  res.redirect("userProfile")
+});
+app.get("/index2",function(req,res){
+    res.render("/userProfile")
+});
+
+  app.post('/signin', async (req, res) => {
     try {
-      const { email, password } = req.query ;
+      const { email, password } = req.body ;
     //    res.send(req.body);
       // Check if required fields are missing
+    
       if (!email || !password ) {
         return res.status(400).json({ message: 'All fields are required' });
       }
-
-  
       const existingUser = await User.findOne({ email:email });
     //   const existingUseremail = await User.findOne({ email:email });
       if (!existingUser) {
@@ -61,7 +115,7 @@ app.post('/register', async (req, res) => {
       else{
         if(existingUser.password==password){
     //   res.status(201).json({ message: 'successfully sign in' });}
-         res.status(201).render("index2");
+         res.status(201).redirect("index2");
         }
       else{
         res.send("wrong password");

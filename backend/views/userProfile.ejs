@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #E0E0E0;
+            display: flex;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #1E1E1E;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding-top: 20px;
+            box-sizing: border-box;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+            z-index: 1;
+        }
+        .sidebar.collapsed {
+            transform: translateX(-100%);
+        }
+        .sidebar a {
+            display: block;
+            color: #B0B0B0;
+            padding: 10px 20px;
+            text-decoration: none;
+            font-size: 18px;
+            white-space: nowrap;
+        }
+        .sidebar a:hover {
+            background-color: #333;
+            color: #E0E0E0;
+        }
+        .container {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            background-color: #1E1E1E;
+            border: 1px solid #333;
+            overflow: hidden;
+            box-sizing: border-box;
+            transition: margin-left 0.3s ease, width 0.3s ease;
+        }
+        .container.collapsed {
+            margin-left: 0;
+            width: 100%;
+        }
+        .header {
+            position: relative;
+            background-color: #1DA1F2;
+            height: 200px;
+        }
+        .header img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .header .edit-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .profile-picture {
+            position: absolute;
+            bottom: -50px;
+            left: 20px;
+            border: 5px solid #1E1E1E;
+            border-radius: 50%;
+            overflow: hidden;
+            width: 100px;
+            height: 100px;
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .profile-details {
+            padding: 70px 20px 20px;
+            text-align: center;
+        }
+        .profile-details h2 {
+            margin: 0;
+            color: #E0E0E0;
+        }
+        .profile-details p {
+            color: #B0B0B0;
+            margin: 5px 0;
+        }
+        .profile-options {
+            margin: 20px 0;
+            text-align: center;
+        }
+        .profile-options button {
+            background-color: #FF0000;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+            width: 45%;
+            box-sizing: border-box;
+        }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #333;
+            background-color: #1E1E1E;
+        }
+        .tabs button {
+            flex: 1;
+            padding: 15px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            color: #B0B0B0;
+            border-bottom: 2px solid transparent;
+            box-sizing: border-box;
+        }
+        .tabs button.active {
+            border-bottom: 2px solid #1DA1F2;
+            color: #E0E0E0;
+        }
+        .content {
+            padding: 20px;
+        }
+        .hamburger {
+            display: none;
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .hamburger div {
+            width: 30px;
+            height: 3px;
+            background-color: #E0E0E0;
+            margin: 5px 0;
+        }
+        @media (max-width: 600px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.collapsed {
+                transform: translateX(0);
+            }
+            .container {
+                margin-left: 0;
+                width: 100%;
+            }
+            .hamburger {
+                display: block;
+            }
+            .profile-picture {
+                width: 70px;
+                height: 70px;
+                bottom: -35px;
+                left: 10px;
+                border-width: 3px;
+            }
+            .profile-details {
+                padding: 50px 10px 10px;
+            }
+            .profile-options button {
+                width: 100%;
+                margin: 5px 0;
+            }
+            .tabs button {
+                padding: 10px;
+                font-size: 14px;
+            }
+            .content {
+                padding: 10px;
+            }
+        }
+        @media (max-width: 400px) {
+            .profile-details h2 {
+                font-size: 18px;
+            }
+            .profile-details p {
+                font-size: 14px;
+            }
+            .tabs button {
+                padding: 8px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hamburger" onclick="toggleSidebar()">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+    <div class="sidebar" id="sidebar">
+        <a href="#">Home</a>
+        <a href="#">Services</a>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+    </div>
+    <div class="container" id="container">
+        <div class="header">
+            <img id="cover-image" src="default-cover.jpg" alt="Cover Image">
+            <input type="file" id="cover-file-input" style="display: none;" accept="image/*">
+            <button class="edit-button" onclick="document.getElementById('cover-file-input').click();">Edit</button>
+            <div class="profile-picture">
+                <img id="profile-image" src="default-profile.jpg" alt="Profile Image">
+                <input type="file" id="profile-file-input" style="display: none;" accept="image/*">
+                <button class="edit-button" style="position: absolute; top: 70px; left: 60px;" onclick="document.getElementById('profile-file-input').click();">Edit</button>
+            </div>
+        </div>
+        <div class="profile-details">
+            <h2><%= name %></h2>
+            <p>@johndoe</p>
+            <p>Location: New York, USA</p>
+            <p>Bio: Web Developer and Designer</p>
+        </div>
+        <div class="profile-options">
+            <button>Follow</button>
+            <button>Message</button>
+        </div>
+        <div class="tabs">
+            <button class="active" onclick="showTab('posts')">Posts</button>
+            <button onclick="showTab('followers')">Followers</button>
+            <button onclick="showTab('following')">Following</button>
+        </div>
+        <div id="posts" class="content">
+            <p>Post 1</p>
+            <p>Post 2</p>
+            <p>Post 3</p>
+        </div>
+        <div id="followers" class="content" style="display:none;">
+            <p>Follower 1</p>
+            <p>Follower 2</p>
+            <p>Follower 3</p>
+        </div>
+        <div id="following" class="content" style="display:none;">
+            <p>Following 1</p>
+            <p>Following 2</p>
+            <p>Following 3</p>
+        </div>
+    </div>
+
+    <script>
+        const coverFileInput = document.getElementById('cover-file-input');
+        const coverImage = document.getElementById('cover-image');
+        const profileFileInput = document.getElementById('profile-file-input');
+        const profileImage = document.getElementById('profile-image');
+        const sidebar = document.getElementById('sidebar');
+        const container = document.getElementById('container');
+
+        coverFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    coverImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        profileFileInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    profileImage.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function showTab(tabId) {
+            const tabs = document.querySelectorAll('.tabs button');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.tabs button[onclick="showTab('${tabId}')"]`).classList.add('active');
+
+            const contents = document.querySelectorAll('.content');
+            contents.forEach(content => {
+                content.style.display = 'none';
+            });
+            document.getElementById(tabId).style.display = 'block';
+        }
+
+        function toggleSidebar() {
+            sidebar.classList.toggle('collapsed');
+            container.classList.toggle('collapsed');
+        }
+    </script>
+</body>
+</html>
