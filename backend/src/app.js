@@ -34,17 +34,7 @@ app.get("/",(req,res) =>{
   res.render("index");
   // res.send("yes")
 })
-app.get("/userProfile", function(req, res) {
-  if (req.isAuthenticated()) {
-      // Access the authenticated user's information from req.user
-      const { name } = req.user;
-      // Render the userProfile view and pass the user information
-      res.render("userProfile", { name });
-  } else {
-      // Redirect to the login page if user is not authenticated
-      res.redirect("/");
-  }
-});
+let body =0;
 
 app.post('/register', async (req, res) => {
     try {
@@ -92,18 +82,20 @@ app.post('/register', async (req, res) => {
 
 // Separate login route
 app.get("/userProfile", function(req, res) {
-  res.redirect("userProfile")
+  res.render("userProfile", { name: body.email });
 });
-app.get("/index2",function(req,res){
-    res.render("/userProfile")
+const zuhair = "Zuhair"; // Define and assign value to the variable
+app.get("/index2", function(req, res) {
+    res.render("index2");
 });
+
 
   app.post('/signin', async (req, res) => {
     try {
       const { email, password } = req.body ;
     //    res.send(req.body);
       // Check if required fields are missing
-    
+      body = req.body;
       if (!email || !password ) {
         return res.status(400).json({ message: 'All fields are required' });
       }
